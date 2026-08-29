@@ -21,6 +21,7 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
     [Header("Visuals")]
     [SerializeField] private ParticleSystem bubbleBurst;
 
+    private bool isUnderwater;
     private bool cachedOriginal;
     private bool originalFogEnabled;
     private Color originalFogColor;
@@ -40,6 +41,8 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
     public override void OnPlayerTriggerEnter(VRCPlayerApi player)
     {
         if (player == null || !player.isLocal) return;
+        if (isUnderwater) return;
+        isUnderwater = true;
         CacheOriginalIfNeeded();
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.Exponential;
@@ -67,6 +70,8 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
     public override void OnPlayerTriggerExit(VRCPlayerApi player)
     {
         if (player == null || !player.isLocal) return;
+        if (!isUnderwater) return;
+        isUnderwater = false;
         if (!cachedOriginal) return;
         RenderSettings.fog = originalFogEnabled;
         RenderSettings.fogMode = originalFogMode;
