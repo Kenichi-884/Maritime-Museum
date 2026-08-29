@@ -6511,6 +6511,10 @@ PrefabInstance:
       propertyPath: m_OrthographicSize
       value: 22
       objectReference: {fileID: 0}
+    - target: {fileID: 11917358, guid: d27db6ff7b550324f9516d372e5381a3, type: 3}
+      propertyPath: m_IgnoreLayers.m_Bits
+      value: 1536
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11483872, guid: d27db6ff7b550324f9516d372e5381a3, type: 3}
     m_RemovedGameObjects: []
