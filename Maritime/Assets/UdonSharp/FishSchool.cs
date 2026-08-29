@@ -31,13 +31,20 @@ public class FishSchool : UdonSharpBehaviour
     [Header("Separation (avoid overlapping bodies)")]
     [SerializeField] private float personalSpace = 0.6f;
     [SerializeField] private float separationStrength = 2f;
+    [Tooltip("Neighbours checked per fish per frame. Keeps cost linear on big schools instead of O(n^2).")]
+    [SerializeField] private int separationSamples = 12;
 
     [Header("Formation")]
     [SerializeField] private float formationSpread = 2.5f;
 
+    [Tooltip("Fish re-plan their wander target on a rotating schedule spread over this many frames. Movement stays smooth every frame; only the (expensive) noise sampling is time-sliced.")]
+    [SerializeField] private int targetUpdateFrames = 6;
+
     private Vector3 homeCenter;
     private Vector3[] velocity;
     private Vector3[] slotOffset;
+    private Vector3[] positions;
+    private Vector3[] wanderTarget;
     private float[] speedSeed;
     private float[] phaseX;
     private float[] phaseY;
@@ -57,6 +64,8 @@ public class FishSchool : UdonSharpBehaviour
         int n = fish.Length;
         velocity = new Vector3[n];
         slotOffset = new Vector3[n];
+        positions = new Vector3[n];
+        wanderTarget = new Vector3[n];
         speedSeed = new float[n];
         phaseX = new float[n];
         phaseY = new float[n];
@@ -81,6 +90,7 @@ public class FishSchool : UdonSharpBehaviour
             phaseY[i] = Random.Range(0f, 100f);
             phaseZ[i] = Random.Range(0f, 100f);
             velocity[i] = fish[i] != null ? fish[i].forward * 0.1f : Vector3.forward * 0.1f;
+            wanderTarget[i] = slotOffset[i];
         }
     }
 
@@ -102,41 +112,70 @@ public class FishSchool : UdonSharpBehaviour
             cz * schoolRadius * 0.6f);
 
         int n = fish.Length;
+
+        // Cache positions once - transform.position reads are the expensive part
+        // at large school sizes, and the separation pass would otherwise re-read
+        // them n times each.
+        for (int i = 0; i < n; i++)
+        {
+            if (fish[i] != null) positions[i] = fish[i].position;
+        }
+
+        int stride = separationSamples > 0 ? separationSamples : 12;
+        int slice = targetUpdateFrames > 0 ? targetUpdateFrames : 1;
+        int sliceThisFrame = Time.frameCount % slice;
+
         for (int i = 0; i < n; i++)
         {
             Transform f = fish[i];
             if (f == null) continue;
 
-            float ox = (Mathf.PerlinNoise(phaseX[i], t * individualWanderSpeed) - 0.5f) * 2f;
-            float oy = (Mathf.PerlinNoise(phaseY[i], t * individualWanderSpeed) - 0.5f) * 2f;
-            float oz = (Mathf.PerlinNoise(phaseZ[i], t * individualWanderSpeed) - 0.5f) * 2f;
-            Vector3 target = schoolCenter + slotOffset[i] + new Vector3(
-                ox * individualSpread,
-                oy * individualSpread * verticalRatio,
-                oz * individualSpread);
-
-            Vector3 seek = (target - f.position).normalized;
-
-            // Push apart from nearby schoolmates so bodies never overlap/clip.
-            Vector3 separation = Vector3.zero;
-            for (int j = 0; j < n; j++)
+            // Re-plan this fish's wander target only on its own slot in the
+            // rotation. Perlin sampling is by far the most expensive part under
+            // Udon, and the target barely changes frame to frame anyway.
+            if (i % slice == sliceThisFrame)
             {
-                if (j == i) continue;
-                Transform other = fish[j];
-                if (other == null) continue;
-                Vector3 away = f.position - other.position;
-                float d = away.magnitude;
-                if (d > 0.001f && d < personalSpace)
+                float ox = (Mathf.PerlinNoise(phaseX[i], t * individualWanderSpeed) - 0.5f) * 2f;
+                float oy = (Mathf.PerlinNoise(phaseY[i], t * individualWanderSpeed) - 0.5f) * 2f;
+                float oz = (Mathf.PerlinNoise(phaseZ[i], t * individualWanderSpeed) - 0.5f) * 2f;
+                wanderTarget[i] = slotOffset[i] + new Vector3(
+                    ox * individualSpread,
+                    oy * individualSpread * verticalRatio,
+                    oz * individualSpread);
+            }
+            Vector3 target = schoolCenter + wanderTarget[i];
+
+            Vector3 myPos = positions[i];
+            Vector3 seek = (target - myPos).normalized;
+
+            // Push apart from schoolmates so bodies never overlap/clip. Only a
+            // fixed number of neighbours is sampled per frame (walking the array
+            // with a stride offset by frame count), so cost stays linear in n
+            // while every pair still gets checked regularly over a few frames.
+            Vector3 separation = Vector3.zero;
+            int checkedCount = 0;
+            int j = (i + Time.frameCount) % n;
+            while (checkedCount < stride && checkedCount < n - 1)
+            {
+                if (j != i)
                 {
-                    separation += (away / d) * (1f - d / personalSpace);
+                    Vector3 away = myPos - positions[j];
+                    float d = away.magnitude;
+                    if (d > 0.001f && d < personalSpace)
+                    {
+                        separation += (away / d) * (1f - d / personalSpace);
+                    }
                 }
+                j++;
+                if (j >= n) j = 0;
+                checkedCount++;
             }
 
             float speed = swimSpeed * (1f + speedSeed[i] * speedVariance);
             Vector3 desiredVelocity = (seek + separation * separationStrength).normalized * speed;
 
             velocity[i] = Vector3.Lerp(velocity[i], desiredVelocity, acceleration * dt);
-            f.position += velocity[i] * dt;
+            f.position = myPos + velocity[i] * dt;
 
             if (velocity[i].sqrMagnitude > 0.0004f)
             {

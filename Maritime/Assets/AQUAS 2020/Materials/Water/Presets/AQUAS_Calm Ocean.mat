@@ -176,7 +176,7 @@ Material:
     - _ReflectionIntensity: 0.546
     - _Refraction: 0.121
     - _Refraction2: 0
-    - _RippleStrength: 0.5
+    - _RippleStrength: 0
     - _Scale0: 0
     - _Scale1: 0
     - _Scale2: 0
