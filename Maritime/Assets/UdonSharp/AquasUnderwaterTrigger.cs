@@ -12,6 +12,15 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
     [SerializeField] private Color underwaterFogColor = new Color(0.04f, 0.22f, 0.28f, 1f);
     [SerializeField] private float underwaterFogDensity = 0.09f;
 
+    [Header("Audio (from AQUAS 2020/Audio/Resources)")]
+    [SerializeField] private AudioSource oneShotSource;
+    [SerializeField] private AudioClip diveSplashClip;
+    [SerializeField] private AudioClip surfaceSplashClip;
+    [SerializeField] private AudioSource underwaterAmbience;
+
+    [Header("Visuals")]
+    [SerializeField] private ParticleSystem bubbleBurst;
+
     private bool cachedOriginal;
     private bool originalFogEnabled;
     private Color originalFogColor;
@@ -36,6 +45,14 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
         RenderSettings.fogMode = FogMode.Exponential;
         RenderSettings.fogColor = underwaterFogColor;
         RenderSettings.fogDensity = underwaterFogDensity;
+
+        if (oneShotSource != null && diveSplashClip != null) oneShotSource.PlayOneShot(diveSplashClip);
+        if (bubbleBurst != null) bubbleBurst.Play();
+        if (underwaterAmbience != null)
+        {
+            underwaterAmbience.loop = true;
+            underwaterAmbience.Play();
+        }
     }
 
     public override void OnPlayerTriggerExit(VRCPlayerApi player)
@@ -46,5 +63,8 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
         RenderSettings.fogMode = originalFogMode;
         RenderSettings.fogColor = originalFogColor;
         RenderSettings.fogDensity = originalFogDensity;
+
+        if (oneShotSource != null && surfaceSplashClip != null) oneShotSource.PlayOneShot(surfaceSplashClip);
+        if (underwaterAmbience != null) underwaterAmbience.Stop();
     }
 }
