@@ -32,7 +32,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture:
-        m_Texture: {fileID: 2800000, guid: 98f2028ec59472a46bb294b09bddd08a, type: 3}
+        m_Texture: {fileID: 2800000, guid: 469fd20d6c04e9b4ab093726127965ad, type: 3}
         m_Scale: {x: 600, y: 600}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -43,7 +43,7 @@ Material:
     - _DistanceVisibility: 10
     - _Fade: 0.5
     - _HeightCut: -20
-    - _Intensity: 1
+    - _Intensity: 4
     - _UnderwaterCut: -10
     - _WaterLevel: -0.05
     - __dirty: 1
