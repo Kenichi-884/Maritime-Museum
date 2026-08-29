@@ -298,7 +298,7 @@ Shader "AQUAS/Desktop/Front/Default"
 			float3 WavesCloseUV1207 = lerpResult67;
 			float temp_output_209_0 = ( _Refraction * 0.2 );
 			float refractiveStrength496 = temp_output_209_0;
-			float screenDepth514 = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE( _CameraDepthTexture, ase_screenPosNorm.xy ));
+			float screenDepth514 = 1000.0;
 			float distanceDepth514 = saturate( ( screenDepth514 - LinearEyeDepth( ase_screenPosNorm.z ) ) / ( 0.1 ) );
 			float2 temp_output_461_0 = ( (WavesCloseUV1207).xy * refractiveStrength496 * distanceDepth514 );
 			float2 refraction511 = temp_output_461_0;
@@ -559,7 +559,7 @@ Shader "AQUAS/Desktop/Front/Default"
 			float4 ase_grabScreenPosNorm = ase_grabScreenPos / ase_grabScreenPos.w;
 			float2 pseudoRefraction484 = ( (ase_grabScreenPosNorm).xy + ( temp_output_209_0 * (resultingNormal674).xy ) );
 			float4 screenColor146 = UNITY_SAMPLE_SCREENSPACE_TEXTURE(_GrabTexture,pseudoRefraction484);
-			float eyeDepth135 = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE( _CameraDepthTexture, ase_screenPosNorm.xy ));
+			float eyeDepth135 = 1000.0;
 			float temp_output_141_0 = ( eyeDepth135 - i.eyeDepth );
 			float3 appendResult258 = (float3(temp_output_141_0 , temp_output_141_0 , temp_output_141_0));
 			float3 clampResult142 = clamp( (float3( 1,1,1 ) + (appendResult258 - float3(0,0,0)) * (float3( 0,0,0 ) - float3( 1,1,1 )) / (( _MainColor * ( 1.0 / _Density ) ).rgb - float3(0,0,0))) , float3( 0,0,0 ) , float3( 1,1,1 ) );
@@ -587,7 +587,7 @@ Shader "AQUAS/Desktop/Front/Default"
 			float3 lerpResult754 = lerp( ( indirectSpecular727 * float3( 0.3,0.3,0.3 ) ) , indirectSpecular727 , fresnelNode755);
 			float3 probeReflection766 = lerpResult754;
 			float4 lerpResult1382 = lerp( (( _EnableRealtimeReflections )?( lerpResult1377 ):( waterColor488 )) , float4( probeReflection766 , 0.0 ) , ( temp_output_1380_0 * _ProbeReflectionIntensity ));
-			float screenDepth313 = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE( _CameraDepthTexture, ase_screenPosNorm.xy ));
+			float screenDepth313 = 1000.0;
 			float distanceDepth313 = saturate( ( screenDepth313 - LinearEyeDepth( ase_screenPosNorm.z ) ) / ( _FoamBlend ) );
 			float2 appendResult1_g654 = (float2(_FoamSpeed , 0.0));
 			float3 temp_output_21_0_g653 = ase_worldNormal;
@@ -622,12 +622,12 @@ Shader "AQUAS/Desktop/Front/Default"
 			float3 HalfDirection29_g659 = normalizeResult28_g659;
 			float dotResult32_g659 = dot( HalfDirection29_g659 , CurrentNormal23_g659 );
 			float SpecularPower14_g659 = exp2( ( ( _Gloss * 10.0 ) + 1.0 ) );
-			float screenDepth402 = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE( _CameraDepthTexture, ase_screenPosNorm.xy ));
+			float screenDepth402 = 1000.0;
 			float distanceDepth402 = saturate( abs( ( screenDepth402 - LinearEyeDepth( ase_screenPosNorm.z ) ) / ( 0.2 ) ) );
 			float4 specularity504 = ( ( distanceDepth402 * _Specular ) * _SpecularColor );
 			float3 specularFinalColor42_g659 = ( AttenuationColor8_g659 * pow( max( dotResult32_g659 , 0.0 ) , SpecularPower14_g659 ) * specularity504.rgb );
 			float3 diffuseSpecular132_g659 = ( diffuseColor131_g659 + specularFinalColor42_g659 );
-			float screenDepth261 = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE( _CameraDepthTexture, ase_screenPosNorm.xy ));
+			float screenDepth261 = 1000.0;
 			float distanceDepth261 = saturate( ( screenDepth261 - LinearEyeDepth( ase_screenPosNorm.z ) ) / ( _DepthTransparency ) );
 			float opacity508 = pow( distanceDepth261 , _TransparencyFade );
 			float4 lerpResult87_g659 = lerp( screenColor86_g659 , float4( diffuseSpecular132_g659 , 0.0 ) , opacity508);
