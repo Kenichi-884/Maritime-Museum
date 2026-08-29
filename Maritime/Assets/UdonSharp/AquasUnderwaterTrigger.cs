@@ -23,6 +23,7 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
 
     [Header("Visuals")]
     [SerializeField] private ParticleSystem bubbleBurst;
+    [SerializeField] private ParticleSystem splashSpray;
 
     private bool isUnderwater;
     private bool cachedOriginal;
@@ -74,6 +75,13 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
             bubbleBurst.transform.position = playerPos;
             bubbleBurst.Play();
         }
+        if (splashSpray != null)
+        {
+            // Spray erupts at the surface line, not at the player's submerged depth.
+            float surfaceY = waterSurface != null ? waterSurface.position.y : playerPos.y;
+            splashSpray.transform.position = new Vector3(playerPos.x, surfaceY, playerPos.z);
+            splashSpray.Play();
+        }
         if (underwaterAmbience != null)
         {
             underwaterAmbience.loop = true;
@@ -92,10 +100,17 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
         RenderSettings.fogColor = originalFogColor;
         RenderSettings.fogDensity = originalFogDensity;
 
+        Vector3 exitPos = player.GetPosition();
         if (oneShotSource != null)
         {
-            oneShotSource.transform.position = player.GetPosition();
+            oneShotSource.transform.position = exitPos;
             if (surfaceSplashClip != null) oneShotSource.PlayOneShot(surfaceSplashClip);
+        }
+        if (splashSpray != null)
+        {
+            float surfaceY = waterSurface != null ? waterSurface.position.y : exitPos.y;
+            splashSpray.transform.position = new Vector3(exitPos.x, surfaceY, exitPos.z);
+            splashSpray.Play();
         }
         if (underwaterAmbience != null) underwaterAmbience.Stop();
     }
