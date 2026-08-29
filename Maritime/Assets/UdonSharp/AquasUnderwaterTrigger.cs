@@ -9,8 +9,11 @@ using VRC.SDKBase;
 [UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
 public class AquasUnderwaterTrigger : UdonSharpBehaviour
 {
-    [SerializeField] private Color underwaterFogColor = new Color(0.04f, 0.22f, 0.28f, 1f);
-    [SerializeField] private float underwaterFogDensity = 0.09f;
+    [SerializeField] private Color underwaterFogColor = new Color(0.223f, 0.377f, 0.519f, 1f);
+    [SerializeField] private float underwaterFogDensityShallow = 0.045f;
+    [SerializeField] private float underwaterFogDensityDeep = 0.14f;
+    [SerializeField] private float maxFogDepth = 10f;
+    [SerializeField] private Transform waterSurface;
 
     [Header("Audio (from AQUAS 2020/Audio/Resources)")]
     [SerializeField] private AudioSource oneShotSource;
@@ -38,6 +41,17 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
         cachedOriginal = true;
     }
 
+    private void Update()
+    {
+        if (!isUnderwater) return;
+        VRCPlayerApi local = Networking.LocalPlayer;
+        if (local == null) return;
+        float surfaceY = waterSurface != null ? waterSurface.position.y : 0f;
+        float depth = surfaceY - local.GetPosition().y;
+        float t = Mathf.Clamp01(depth / maxFogDepth);
+        RenderSettings.fogDensity = Mathf.Lerp(underwaterFogDensityShallow, underwaterFogDensityDeep, t);
+    }
+
     public override void OnPlayerTriggerEnter(VRCPlayerApi player)
     {
         if (player == null || !player.isLocal) return;
@@ -47,7 +61,7 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.Exponential;
         RenderSettings.fogColor = underwaterFogColor;
-        RenderSettings.fogDensity = underwaterFogDensity;
+        RenderSettings.fogDensity = underwaterFogDensityShallow;
 
         Vector3 playerPos = player.GetPosition();
         if (oneShotSource != null)
