@@ -46,8 +46,17 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
         RenderSettings.fogColor = underwaterFogColor;
         RenderSettings.fogDensity = underwaterFogDensity;
 
-        if (oneShotSource != null && diveSplashClip != null) oneShotSource.PlayOneShot(diveSplashClip);
-        if (bubbleBurst != null) bubbleBurst.Play();
+        Vector3 playerPos = player.GetPosition();
+        if (oneShotSource != null)
+        {
+            oneShotSource.transform.position = playerPos;
+            if (diveSplashClip != null) oneShotSource.PlayOneShot(diveSplashClip);
+        }
+        if (bubbleBurst != null)
+        {
+            bubbleBurst.transform.position = playerPos;
+            bubbleBurst.Play();
+        }
         if (underwaterAmbience != null)
         {
             underwaterAmbience.loop = true;
@@ -64,7 +73,11 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
         RenderSettings.fogColor = originalFogColor;
         RenderSettings.fogDensity = originalFogDensity;
 
-        if (oneShotSource != null && surfaceSplashClip != null) oneShotSource.PlayOneShot(surfaceSplashClip);
+        if (oneShotSource != null)
+        {
+            oneShotSource.transform.position = player.GetPosition();
+            if (surfaceSplashClip != null) oneShotSource.PlayOneShot(surfaceSplashClip);
+        }
         if (underwaterAmbience != null) underwaterAmbience.Stop();
     }
 }
