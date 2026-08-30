@@ -1,6 +1,7 @@
 
 using UdonSharp;
 using UnityEngine;
+using VRC.SDKBase;
 
 // Lightweight fish-schooling controller. One instance drives every fish in
 // "fish" - no per-fish scripts. Uses velocity + inertia (not instant direction
@@ -39,6 +40,18 @@ public class FishSchool : UdonSharpBehaviour
 
     [Tooltip("Fish re-plan their wander target on a rotating schedule spread over this many frames. Movement stays smooth every frame; only the (expensive) noise sampling is time-sliced.")]
     [SerializeField] private int targetUpdateFrames = 6;
+
+    [Header("Player Avoidance")]
+    [Tooltip("Fish within this distance of the local player scatter away instead of following the school's wander target.")]
+    [SerializeField] private float fleeRadius = 4f;
+    [Tooltip("How strongly the flee-away direction overrides normal seek/separation once inside Flee Radius.")]
+    [SerializeField] private float fleeStrength = 3f;
+    [Tooltip("Speed multiplier applied while fleeing, on top of the fish's normal swim speed.")]
+    [SerializeField] private float fleeSpeedMultiplier = 2.2f;
+
+    [Tooltip("Optional predators (sharks, etc.) the school scatters away from exactly like the local player, so a big fish swimming through breaks the school up instead of it swimming obliviously in place.")]
+    [SerializeField] private Transform[] predators;
+    [SerializeField] private float predatorFleeRadius = 9f;
 
     private Vector3 homeCenter;
     private Vector3[] velocity;
@@ -125,6 +138,15 @@ public class FishSchool : UdonSharpBehaviour
         int slice = targetUpdateFrames > 0 ? targetUpdateFrames : 1;
         int sliceThisFrame = Time.frameCount % slice;
 
+        bool hasPlayer = false;
+        Vector3 playerPos = Vector3.zero;
+        VRCPlayerApi localPlayer = Networking.LocalPlayer;
+        if (localPlayer != null)
+        {
+            hasPlayer = true;
+            playerPos = localPlayer.GetPosition();
+        }
+
         for (int i = 0; i < n; i++)
         {
             Transform f = fish[i];
@@ -173,6 +195,37 @@ public class FishSchool : UdonSharpBehaviour
 
             float speed = swimSpeed * (1f + speedSeed[i] * speedVariance);
             Vector3 desiredVelocity = (seek + separation * separationStrength).normalized * speed;
+
+            if (hasPlayer)
+            {
+                Vector3 away = myPos - playerPos;
+                float distToPlayer = away.magnitude;
+                if (distToPlayer < fleeRadius && distToPlayer > 0.001f)
+                {
+                    float fleeAmount = 1f - (distToPlayer / fleeRadius);
+                    Vector3 fleeDir = away / distToPlayer;
+                    Vector3 fleeVelocity = fleeDir * speed * fleeSpeedMultiplier;
+                    desiredVelocity = Vector3.Lerp(desiredVelocity, fleeVelocity, fleeAmount * fleeStrength * 0.5f);
+                }
+            }
+
+            if (predators != null && predators.Length > 0)
+            {
+                for (int p = 0; p < predators.Length; p++)
+                {
+                    Transform pred = predators[p];
+                    if (pred == null) continue;
+                    Vector3 awayPred = myPos - pred.position;
+                    float distToPred = awayPred.magnitude;
+                    if (distToPred < predatorFleeRadius && distToPred > 0.001f)
+                    {
+                        float fleeAmount = 1f - (distToPred / predatorFleeRadius);
+                        Vector3 fleeDir = awayPred / distToPred;
+                        Vector3 fleeVelocity = fleeDir * speed * fleeSpeedMultiplier;
+                        desiredVelocity = Vector3.Lerp(desiredVelocity, fleeVelocity, fleeAmount * fleeStrength * 0.6f);
+                    }
+                }
+            }
 
             velocity[i] = Vector3.Lerp(velocity[i], desiredVelocity, acceleration * dt);
             f.position = myPos + velocity[i] * dt;

@@ -129,7 +129,7 @@ Material:
     - _DepthFade: 1
     - _DepthTransparency: 0.2
     - _DistanceFade: 0.5
-    - _Distortion: 0.737
+    - _Distortion: 0.85
     - _EdgeLength: 15
     - _EnableProbeRelfections: 1
     - _EnableRealtimeReflections: 0
@@ -166,8 +166,8 @@ Material:
     - _MediumDistanceFalloff: 2.56
     - _MediumTilingDistance: 100
     - _MediumTilingFade: 1
-    - _NormalStrength: 1.59
-    - _NormalTiling: 0.32
+    - _NormalStrength: 2.1
+    - _NormalTiling: 0.16
     - _ObjectRotation: 0
     - _PhysicalNormalStrength: 0
     - _ProbeReflectionIntensity: 0.55
@@ -208,7 +208,7 @@ Material:
     - _WaterDepth: 6.47
     - _WaterFalloff: 2.4
     - _Wave: 0
-    - _WaveSpeed: 0.08
+    - _WaveSpeed: 0.05
     - _XOffset0: 0
     - _XOffset1: 0
     - _XOffset2: 0

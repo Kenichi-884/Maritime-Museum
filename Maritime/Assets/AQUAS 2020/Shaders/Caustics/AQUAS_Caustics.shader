@@ -132,7 +132,16 @@ Shader "AQUAS/Misc/Caustics"
 				// on any surface the projector covers.
 				half dotResult62 = dot( worldSpaceLightDir , normalizedWorldNormal );
 				half3 causticsTint = _CausticsTint.rgb;
-				half4 lerpResult63 = lerp( ( saturate( ( tex2D( _Texture, ( (ase_worldPos).xz * float2( 0.1,0.1 ) * _CausticsScale ) ) * half4( causticsTint , 0.0 ) ) ) * ( 1.0 - saturate( ( ( ( _WaterLevel + -1.0 ) * -1.0 ) + ase_worldPos.y ) ) ) * saturate( ( ase_worldPos.y + ( -1.0 * _DepthFade ) ) ) * _Intensity ) , float4(0,0,0,1) , saturate( pow( ( distance( ase_worldPos , _WorldSpaceCameraPos ) / _DistanceVisibility ) , _Fade ) ));
+				// Gentle time-based UV wobble so the caustic pool shimmers/refracts instead of
+				// looking like a static decal. Uses a high spatial frequency (much higher than
+				// the caustic texture's own tiling) so nearby patches shimmer out of phase with
+				// each other instead of the whole pool sliding around as one uniform wave.
+				float2 shimmer = float2(
+					sin(_Time.y * 1.3 + ase_worldPos.x * 2.1 + ase_worldPos.z * 1.7),
+					cos(_Time.y * 1.1 + ase_worldPos.z * 2.3 - ase_worldPos.x * 1.3)
+				) * 0.025;
+				float2 causticsUV = (ase_worldPos).xz * float2( 0.1,0.1 ) * _CausticsScale + shimmer;
+				half4 lerpResult63 = lerp( ( saturate( ( tex2D( _Texture, causticsUV ) * half4( causticsTint , 0.0 ) ) ) * ( 1.0 - saturate( ( ( ( _WaterLevel + -1.0 ) * -1.0 ) + ase_worldPos.y ) ) ) * saturate( ( ase_worldPos.y + ( -1.0 * _DepthFade ) ) ) * _Intensity ) , float4(0,0,0,1) , saturate( pow( ( distance( ase_worldPos , _WorldSpaceCameraPos ) / _DistanceVisibility ) , _Fade ) ));
 				
 				
 				finalColor = lerpResult63;
