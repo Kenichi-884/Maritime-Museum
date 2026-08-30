@@ -9,6 +9,7 @@ Shader "AQUAS/Misc/Caustics"
 		_DistanceVisibility("Distance Visibility", Float) = 0
 		_Fade("Fade", Float) = 0
 		_DepthFade("Depth Fade", Float) = 0
+		_CausticsTint("Caustics Tint", Color) = (1,1,1,1)
 
 	}
 	
@@ -24,17 +25,16 @@ Shader "AQUAS/Misc/Caustics"
 		ENDCG
 		Blend One One
 		Cull Back
-		ColorMask RGBA
-		ZWrite On
+		ColorMask RGB
+		ZWrite Off
 		ZTest LEqual
-		Offset 0 , 0
-		
-		
-		
+		Offset -1 , -1
+
+
+
 		Pass
 		{
 			Name "Unlit"
-			Tags { "LightMode"="ForwardBase" }
 			CGPROGRAM
 
 			
@@ -79,6 +79,7 @@ Shader "AQUAS/Misc/Caustics"
 			uniform float _Intensity;
 			uniform float _DistanceVisibility;
 			uniform float _Fade;
+			uniform float4 _CausticsTint;
 
 			
 			v2f vert ( appdata v )
@@ -125,8 +126,13 @@ Shader "AQUAS/Misc/Caustics"
 				half3 worldSpaceLightDir = Unity_SafeNormalize(UnityWorldSpaceLightDir(ase_worldPos));
 				half3 ase_worldNormal = i.ase_texcoord1.xyz;
 				half3 normalizedWorldNormal = normalize( ase_worldNormal );
+				// A Projector pass has no light bound, so _LightColor0 comes through
+				// as black and the original multiply wiped the caustics out entirely.
+				// Use a constant tint and drop the N.L term so caustics always show
+				// on any surface the projector covers.
 				half dotResult62 = dot( worldSpaceLightDir , normalizedWorldNormal );
-				half4 lerpResult63 = lerp( ( saturate( ( tex2D( _Texture, ( (ase_worldPos).xz * float2( 0.1,0.1 ) * _CausticsScale ) ) * half4( ase_lightColor.rgb , 0.0 ) ) ) * ( 1.0 - saturate( ( ( ( _WaterLevel + -1.0 ) * -1.0 ) + ase_worldPos.y ) ) ) * saturate( ( ase_worldPos.y + ( -1.0 * _DepthFade ) ) ) * _Intensity * saturate( dotResult62 ) ) , float4(0,0,0,1) , saturate( pow( ( distance( ase_worldPos , _WorldSpaceCameraPos ) / _DistanceVisibility ) , _Fade ) ));
+				half3 causticsTint = _CausticsTint.rgb;
+				half4 lerpResult63 = lerp( ( saturate( ( tex2D( _Texture, ( (ase_worldPos).xz * float2( 0.1,0.1 ) * _CausticsScale ) ) * half4( causticsTint , 0.0 ) ) ) * ( 1.0 - saturate( ( ( ( _WaterLevel + -1.0 ) * -1.0 ) + ase_worldPos.y ) ) ) * saturate( ( ase_worldPos.y + ( -1.0 * _DepthFade ) ) ) * _Intensity ) , float4(0,0,0,1) , saturate( pow( ( distance( ase_worldPos , _WorldSpaceCameraPos ) / _DistanceVisibility ) , _Fade ) ));
 				
 				
 				finalColor = lerpResult63;
