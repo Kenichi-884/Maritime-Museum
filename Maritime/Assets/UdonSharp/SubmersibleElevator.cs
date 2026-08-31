@@ -16,6 +16,9 @@ public class SubmersibleElevator : UdonSharpBehaviour
     [SerializeField] private float descentDuration = 100f;
     [SerializeField] private float ascentDuration = 70f;
 
+    [Tooltip("A seated rider's own collider is disabled by VRChat while in a Station, so the water trigger volumes never fire for them - this bell drives the underwater effect directly for the whole ride instead of relying on trigger collision.")]
+    [SerializeField] private AquasUnderwaterTrigger underwaterEffect;
+
     private bool moving;
     private bool goingDown;
     private float timer;
@@ -32,6 +35,7 @@ public class SubmersibleElevator : UdonSharpBehaviour
     {
         if (player == null || !player.isLocal) return;
         BeginMove(true);
+        if (underwaterEffect != null) underwaterEffect.ForceEnter();
     }
 
     public override void OnStationExited(VRCPlayerApi player)
@@ -66,6 +70,12 @@ public class SubmersibleElevator : UdonSharpBehaviour
         float e = t * t * (3f - 2f * t); // smoothstep - gentle ease in/out, no jolt at either end
         transform.position = Vector3.LerpUnclamped(fromPos, toPos, e);
 
-        if (t >= 1f) moving = false;
+        if (t >= 1f)
+        {
+            moving = false;
+            // Only the surface arrival should clear the effect - reaching the seafloor leaves it
+            // on, since the rider is still deep underwater and may get out to swim around there.
+            if (!goingDown && underwaterEffect != null) underwaterEffect.ForceExit();
+        }
     }
 }

@@ -50,15 +50,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _FoamTexture:
         m_Texture: {fileID: 2800000, guid: 44141177c75230f46a3bb808ddf10b23, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 10, y: 10}
         m_Offset: {x: 0, y: 0}
     - _NormalTexture:
         m_Texture: {fileID: 2800000, guid: 23bcf594ec017424e892a95b68f6b439, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 10, y: 10}
         m_Offset: {x: 0, y: 0}
     - _RandomMask:
         m_Texture: {fileID: 2800000, guid: 15f5278be96c0184fa0b0fa59e90a43a, type: 3}
-        m_Scale: {x: 2, y: 2}
+        m_Scale: {x: 20, y: 20}
         m_Offset: {x: 0, y: 0}
     - _ReflectionTex:
         m_Texture: {fileID: 0}

@@ -32,14 +32,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture:
-        m_Texture: {fileID: 2800000, guid: 04dfe7ddd174b894b85ab9c3535a5f57, type: 3}
+        m_Texture: {fileID: 2800000, guid: c54b187c51f434c49b28e99584fc03c5, type: 3}
         m_Scale: {x: 600, y: 600}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _CausticIntensity: 1
     - _CausticsScale: 5
-    - _DepthFade: -22.05
+    - _DepthFade: -35.05
     - _DistanceVisibility: 60
     - _Fade: 2
     - _HeightCut: -20
