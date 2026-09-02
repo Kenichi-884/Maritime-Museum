@@ -66,56 +66,6 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
     [SerializeField] private float defaultStrafeSpeed = 2f;
     [SerializeField] private float defaultJumpImpulse = 3f;
 
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        // Trigger volume outline
-        Collider col = GetComponent<Collider>();
-        if (col != null)
-        {
-            Gizmos.color = new Color(0.1f, 0.5f, 1f, 0.25f);
-            BoxCollider box = col as BoxCollider;
-            if (box != null)
-            {
-                Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
-                Gizmos.DrawCube(box.center, box.size);
-                Gizmos.color = new Color(0.1f, 0.5f, 1f, 0.8f);
-                Gizmos.DrawWireCube(box.center, box.size);
-                Gizmos.matrix = Matrix4x4.identity;
-            }
-            else
-            {
-                Gizmos.DrawWireSphere(col.bounds.center, col.bounds.extents.magnitude);
-            }
-        }
-
-        // Water surface line and fog depth range
-        float surfY = waterSurface != null ? waterSurface.position.y : transform.position.y;
-        Vector3 center = waterSurface != null ? waterSurface.position : transform.position;
-        float halfW = 20f;
-
-        // Water surface
-        Gizmos.color = new Color(0.2f, 0.8f, 1f, 0.9f);
-        Gizmos.DrawLine(center + Vector3.left * halfW, center + Vector3.right * halfW);
-        Gizmos.DrawLine(center + Vector3.forward * halfW, center + Vector3.back * halfW);
-
-        // Max fog depth line
-        Vector3 deepCenter = new Vector3(center.x, surfY - maxFogDepth, center.z);
-        Gizmos.color = new Color(0f, 0.2f, 0.6f, 0.7f);
-        Gizmos.DrawLine(deepCenter + Vector3.left * halfW, deepCenter + Vector3.right * halfW);
-        Gizmos.DrawLine(deepCenter + Vector3.forward * halfW, deepCenter + Vector3.back * halfW);
-
-        // Vertical connector
-        Gizmos.color = new Color(0.1f, 0.5f, 1f, 0.4f);
-        Gizmos.DrawLine(center, deepCenter);
-
-        UnityEditor.Handles.color = new Color(0.2f, 0.8f, 1f, 0.9f);
-        UnityEditor.Handles.Label(center + Vector3.right * halfW, "Water Surface");
-        UnityEditor.Handles.color = new Color(0f, 0.2f, 0.6f, 0.9f);
-        UnityEditor.Handles.Label(deepCenter + Vector3.right * halfW, $"Max Fog Depth ({maxFogDepth}u)");
-    }
-#endif
-
     private void Update()
     {
         if (!isUnderwater) return;
