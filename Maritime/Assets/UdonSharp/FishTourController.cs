@@ -39,7 +39,7 @@ public class FishTourController : UdonSharpBehaviour
     private Vector3[] homePositions;
     private Quaternion[] homeRotations;
 
-    // Active tween state for whichever fish is currently mid-swim.
+    // Tween state for the incoming fish (approaching the player).
     private bool tweenActive;
     private Transform tweenTarget;
     private Vector3 tweenFrom;
@@ -48,6 +48,19 @@ public class FishTourController : UdonSharpBehaviour
     private Quaternion tweenToRot;
     private float tweenTimer;
     private float tweenDuration;
+
+    // Separate tween state for the outgoing fish (returning home).
+    // Without this, BeginSwim for the outgoing fish is immediately overwritten
+    // by the incoming fish's BeginSwim, leaving the previous fish stuck at the
+    // approach point while the next one arrives alongside it.
+    private bool outTweenActive;
+    private Transform outTweenTarget;
+    private Vector3 outTweenFrom;
+    private Vector3 outTweenTo;
+    private Quaternion outTweenFromRot;
+    private Quaternion outTweenToRot;
+    private float outTweenTimer;
+    private float outTweenDuration;
 
     public override void OnPlayerTriggerEnter(VRC.SDKBase.VRCPlayerApi player)
     {
@@ -85,7 +98,7 @@ public class FishTourController : UdonSharpBehaviour
         // Send the previous fish home before bringing the next one forward.
         if (currentIndex >= 0 && currentIndex < fish.Length && fish[currentIndex] != null)
         {
-            BeginSwim(fish[currentIndex], fish[currentIndex].position, homePositions[currentIndex],
+            BeginSwimOut(fish[currentIndex], fish[currentIndex].position, homePositions[currentIndex],
                 fish[currentIndex].rotation, homeRotations[currentIndex], swimOutDuration);
         }
 
@@ -132,17 +145,38 @@ public class FishTourController : UdonSharpBehaviour
         tweenActive = true;
     }
 
+    private void BeginSwimOut(Transform target, Vector3 from, Vector3 to, Quaternion fromRot, Quaternion toRot, float duration)
+    {
+        outTweenTarget = target;
+        outTweenFrom = from;
+        outTweenTo = to;
+        outTweenFromRot = fromRot;
+        outTweenToRot = toRot;
+        outTweenTimer = 0f;
+        outTweenDuration = Mathf.Max(0.01f, duration);
+        outTweenActive = true;
+    }
+
     private void Update()
     {
-        if (!tweenActive || tweenTarget == null) return;
+        if (tweenActive && tweenTarget != null)
+        {
+            tweenTimer += Time.deltaTime;
+            float t = Mathf.Clamp01(tweenTimer / tweenDuration);
+            float e = TweenEase.InOutCubic(t);
+            tweenTarget.position = Vector3.LerpUnclamped(tweenFrom, tweenTo, e);
+            tweenTarget.rotation = Quaternion.Slerp(tweenFromRot, tweenToRot, e);
+            if (t >= 1f) tweenActive = false;
+        }
 
-        tweenTimer += Time.deltaTime;
-        float t = Mathf.Clamp01(tweenTimer / tweenDuration);
-        float e = TweenEase.InOutCubic(t);
-
-        tweenTarget.position = Vector3.LerpUnclamped(tweenFrom, tweenTo, e);
-        tweenTarget.rotation = Quaternion.Slerp(tweenFromRot, tweenToRot, e);
-
-        if (t >= 1f) tweenActive = false;
+        if (outTweenActive && outTweenTarget != null)
+        {
+            outTweenTimer += Time.deltaTime;
+            float t = Mathf.Clamp01(outTweenTimer / outTweenDuration);
+            float e = TweenEase.InOutCubic(t);
+            outTweenTarget.position = Vector3.LerpUnclamped(outTweenFrom, outTweenTo, e);
+            outTweenTarget.rotation = Quaternion.Slerp(outTweenFromRot, outTweenToRot, e);
+            if (t >= 1f) outTweenActive = false;
+        }
     }
 }
