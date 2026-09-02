@@ -74,7 +74,8 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
         if (col != null)
         {
             Gizmos.color = new Color(0.1f, 0.5f, 1f, 0.25f);
-            if (col is BoxCollider box)
+            BoxCollider box = col as BoxCollider;
+            if (box != null)
             {
                 Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
                 Gizmos.DrawCube(box.center, box.size);
