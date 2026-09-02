@@ -29051,7 +29051,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -89055,9 +89055,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1453759471}
   underwaterFogColor: {r: 0.223, g: 0.377, b: 0.519, a: 1}
-  underwaterFogColorDeep: {r: 0.223, g: 0.377, b: 0.519, a: 1}
-  underwaterFogDensityShallow: 0.06
-  underwaterFogDensityDeep: 0.09
+  underwaterFogColorDeep: {r: 0.05, g: 0.1, b: 0.18, a: 1}
+  underwaterFogDensityShallow: 0.09
+  underwaterFogDensityDeep: 0.15
   maxFogDepth: 40
   waterSurface: {fileID: 506759680}
   zoneManager: {fileID: 1441850048}
@@ -89068,8 +89068,8 @@ MonoBehaviour:
   bubbleBurst: {fileID: 794819918}
   splashSpray: {fileID: 1337858849}
   underwaterSkybox: {fileID: 2100000, guid: 41e32691a2f96c64f9862c5a7d19d47f, type: 2}
-  ambientIntensityShallow: 1
-  ambientIntensityDeep: 0.7
+  ambientIntensityShallow: 0.6
+  ambientIntensityDeep: 0.45
   deepPressureVolume: {fileID: 282997117}
   underwaterGravityStrength: 0.15
   underwaterWalkSpeed: 2.5
@@ -92084,7 +92084,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -111949,8 +111949,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 1710337419}
   underwaterFogColor: {r: 0.05, g: 0.14, b: 0.22, a: 1}
   underwaterFogColorDeep: {r: 0.05, g: 0.14, b: 0.22, a: 1}
-  underwaterFogDensityShallow: 0.06
-  underwaterFogDensityDeep: 0.09
+  underwaterFogDensityShallow: 0.10
+  underwaterFogDensityDeep: 0.16
   maxFogDepth: 40
   waterSurface: {fileID: 290849542}
   zoneManager: {fileID: 1441850048}
@@ -111961,8 +111961,8 @@ MonoBehaviour:
   bubbleBurst: {fileID: 1368336689}
   splashSpray: {fileID: 1836619477}
   underwaterSkybox: {fileID: 2100000, guid: 41e32691a2f96c64f9862c5a7d19d47f, type: 2}
-  ambientIntensityShallow: 1
-  ambientIntensityDeep: 0.7
+  ambientIntensityShallow: 0.5
+  ambientIntensityDeep: 0.35
   deepPressureVolume: {fileID: 282997117}
   underwaterGravityStrength: 0.15
   underwaterWalkSpeed: 2.5
@@ -127142,7 +127142,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -148049,7 +148049,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -158507,7 +158507,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -165333,8 +165333,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 2097165144}
   underwaterFogColor: {r: 0.015, g: 0.04, b: 0.07, a: 1}
   underwaterFogColorDeep: {r: 0.015, g: 0.04, b: 0.07, a: 1}
-  underwaterFogDensityShallow: 0.07
-  underwaterFogDensityDeep: 0.11
+  underwaterFogDensityShallow: 0.12
+  underwaterFogDensityDeep: 0.20
   maxFogDepth: 40
   waterSurface: {fileID: 682833194}
   zoneManager: {fileID: 1441850048}
@@ -165345,8 +165345,8 @@ MonoBehaviour:
   bubbleBurst: {fileID: 496936145}
   splashSpray: {fileID: 868966849}
   underwaterSkybox: {fileID: 2100000, guid: 41e32691a2f96c64f9862c5a7d19d47f, type: 2}
-  ambientIntensityShallow: 1
-  ambientIntensityDeep: 0.7
+  ambientIntensityShallow: 0.4
+  ambientIntensityDeep: 0.25
   deepPressureVolume: {fileID: 282997117}
   underwaterGravityStrength: 0.15
   underwaterWalkSpeed: 2.5
