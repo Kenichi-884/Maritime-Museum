@@ -39724,8 +39724,8 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 735420982}
   surfaceDock: {fileID: 615815511}
   seafloorDock: {fileID: 1285415124}
-  descentDuration: 240
-  ascentDuration: 90
+  descentDuration: 420
+  ascentDuration: 150
   underwaterEffect: {fileID: 2097165145}
 --- !u!114 &735420984
 MonoBehaviour:
@@ -89055,9 +89055,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1453759471}
   underwaterFogColor: {r: 0.223, g: 0.377, b: 0.519, a: 1}
-  underwaterFogColorDeep: {r: 0, g: 0, b: 0, a: 1}
-  underwaterFogDensityShallow: 0.13
-  underwaterFogDensityDeep: 0.3
+  underwaterFogColorDeep: {r: 0.04, g: 0.12, b: 0.22, a: 1}
+  underwaterFogDensityShallow: 0.06
+  underwaterFogDensityDeep: 0.09
   maxFogDepth: 40
   waterSurface: {fileID: 506759680}
   zoneManager: {fileID: 1441850048}
@@ -89069,7 +89069,7 @@ MonoBehaviour:
   splashSpray: {fileID: 1337858849}
   underwaterSkybox: {fileID: 2100000, guid: 41e32691a2f96c64f9862c5a7d19d47f, type: 2}
   ambientIntensityShallow: 1
-  ambientIntensityDeep: 0.15
+  ambientIntensityDeep: 0.7
   deepPressureVolume: {fileID: 282997117}
   underwaterGravityStrength: 0.15
   underwaterWalkSpeed: 2.5
@@ -111948,9 +111948,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1710337419}
   underwaterFogColor: {r: 0.05, g: 0.14, b: 0.22, a: 1}
-  underwaterFogColorDeep: {r: 0, g: 0, b: 0, a: 1}
-  underwaterFogDensityShallow: 0.11
-  underwaterFogDensityDeep: 0.28
+  underwaterFogColorDeep: {r: 0.02, g: 0.07, b: 0.16, a: 1}
+  underwaterFogDensityShallow: 0.06
+  underwaterFogDensityDeep: 0.09
   maxFogDepth: 40
   waterSurface: {fileID: 290849542}
   zoneManager: {fileID: 1441850048}
@@ -111962,7 +111962,7 @@ MonoBehaviour:
   splashSpray: {fileID: 1836619477}
   underwaterSkybox: {fileID: 2100000, guid: 41e32691a2f96c64f9862c5a7d19d47f, type: 2}
   ambientIntensityShallow: 1
-  ambientIntensityDeep: 0.15
+  ambientIntensityDeep: 0.7
   deepPressureVolume: {fileID: 282997117}
   underwaterGravityStrength: 0.15
   underwaterWalkSpeed: 2.5
@@ -165332,9 +165332,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2097165144}
   underwaterFogColor: {r: 0.015, g: 0.04, b: 0.07, a: 1}
-  underwaterFogColorDeep: {r: 0, g: 0, b: 0, a: 1}
-  underwaterFogDensityShallow: 0.13
-  underwaterFogDensityDeep: 0.35
+  underwaterFogColorDeep: {r: 0.01, g: 0.04, b: 0.1, a: 1}
+  underwaterFogDensityShallow: 0.07
+  underwaterFogDensityDeep: 0.11
   maxFogDepth: 40
   waterSurface: {fileID: 682833194}
   zoneManager: {fileID: 1441850048}
@@ -165346,7 +165346,7 @@ MonoBehaviour:
   splashSpray: {fileID: 868966849}
   underwaterSkybox: {fileID: 2100000, guid: 41e32691a2f96c64f9862c5a7d19d47f, type: 2}
   ambientIntensityShallow: 1
-  ambientIntensityDeep: 0.15
+  ambientIntensityDeep: 0.7
   deepPressureVolume: {fileID: 282997117}
   underwaterGravityStrength: 0.15
   underwaterWalkSpeed: 2.5

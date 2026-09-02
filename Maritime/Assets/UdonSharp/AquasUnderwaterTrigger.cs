@@ -32,6 +32,9 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
     [SerializeField] private ParticleSystem splashSpray;
 
     private bool isUnderwater;
+    // Set by ForceEnter/ForceExit (elevator). While true, physical OnPlayerTriggerExit calls
+    // are ignored - the elevator owns the effect for the duration of the ride.
+    private bool forceActive;
 
     [Tooltip("Flat dark skybox material swapped in while submerged. Skyboxes never receive fog, so any sightline that never hits geometry (looking out past the terrain/water mesh edges) would otherwise punch straight through to the raw starfield, breaking the underwater illusion at range.")]
     [SerializeField] private Material underwaterSkybox;
@@ -44,6 +47,8 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
 
     [Tooltip("A dedicated 'deep pressure warp' PostProcessVolume (chromatic aberration + vignette) whose Weight is dialed up with depth, for a subtle refraction feel the deeper you go. Weight is the only PostProcessVolume field Udon can touch - the profile's own effect settings aren't exposed - so the profile itself should be authored with the desired full-strength look and just faded in/out here.")]
     [SerializeField] private PostProcessVolume deepPressureVolume;
+    [Tooltip("Maximum weight the deep pressure PostProcess volume is allowed to reach (0-1). Keep this low (0.25-0.4) if the profile contains a vignette or color-grade that darkens too aggressively at full weight.")]
+    [SerializeField] private float deepPressureMaxWeight = 0.3f;
 
     [Header("Buoyancy (swim vs. free-fall)")]
     [Tooltip("Player gravity while submerged. VRChat default is 1; a low value like 0.1-0.2 reads as sinking/drifting instead of plummeting.")]
@@ -77,7 +82,7 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
 
         RenderSettings.ambientIntensity = Mathf.Lerp(ambientIntensityShallow, ambientIntensityDeep, t);
 
-        if (deepPressureVolume != null) deepPressureVolume.weight = t;
+        if (deepPressureVolume != null) deepPressureVolume.weight = t * deepPressureMaxWeight;
     }
 
     // Seated passengers (e.g. the deep-sea elevator) don't fire VRC player-trigger callbacks -
@@ -87,6 +92,7 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
     {
         VRCPlayerApi local = Networking.LocalPlayer;
         if (local == null) return;
+        forceActive = true;
         OnPlayerTriggerEnter(local);
     }
 
@@ -94,6 +100,7 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
     {
         VRCPlayerApi local = Networking.LocalPlayer;
         if (local == null) return;
+        forceActive = false;
         OnPlayerTriggerExit(local);
     }
 
@@ -151,6 +158,8 @@ public class AquasUnderwaterTrigger : UdonSharpBehaviour
     {
         if (player == null || !player.isLocal) return;
         if (!isUnderwater) return;
+        // ForceEnter (elevator ride) owns the effect - physical zone exits must not clear it mid-descent.
+        if (forceActive) return;
         isUnderwater = false;
         // Only the real water-to-surface transition should play surfacing cues - leaving one
         // overlapping underwater zone while still inside another must stay silent/effect-only.
