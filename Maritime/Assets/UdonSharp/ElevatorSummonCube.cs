@@ -2,16 +2,13 @@
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
-using VRCStation = VRC.SDK3.Components.VRCStation;
 
-// Attached to the single remaining selection cube. Interacting with it seats the local
-// player directly into the deep-sea submersible elevator's station, which then begins its
-// scripted descent (see SubmersibleElevator.OnStationEntered) without requiring the player
-// to walk over and sit down themselves.
+// Attached to the selection cube. Interacting with it directly starts the submersible
+// elevator's descent without using a VRCStation (which would teleport/snap the player).
 [UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
 public class ElevatorSummonCube : UdonSharpBehaviour
 {
-    [SerializeField] private VRCStation elevatorStation;
+    [SerializeField] private SubmersibleElevator elevator;
 
     private void Start()
     {
@@ -20,8 +17,8 @@ public class ElevatorSummonCube : UdonSharpBehaviour
 
     public override void Interact()
     {
-        if (elevatorStation == null) return;
+        if (elevator == null) return;
         VRCPlayerApi local = Networking.LocalPlayer;
-        if (Utilities.IsValid(local)) elevatorStation.UseStation(local);
+        if (Utilities.IsValid(local)) elevator.StartDescent();
     }
 }
